@@ -359,7 +359,6 @@ namespace Mahou
 			this.chk_OneLayoutWholeWord.Text = "Use one layout for whole word in CS.";
 			this.chk_OneLayoutWholeWord.UseVisualStyleBackColor = true;
 			this.chk_OneLayoutWholeWord.CheckedChanged += new System.EventHandler(this.Chk_CheckedChanged);
-			this.chk_OneLayoutWholeWord.MouseHover += new System.EventHandler(this.Chk_OneLayoutWholeWordMouseHover);
 			// 
 			// lnk_plugin
 			// 
@@ -381,7 +380,6 @@ namespace Mahou
 			this.chk_MCDS_support.TabIndex = 13;
 			this.chk_MCDS_support.Text = "Enable MCDS support.";
 			this.chk_MCDS_support.UseVisualStyleBackColor = true;
-			this.chk_MCDS_support.MouseHover += new System.EventHandler(this.Chk_MCDS_supportMouseHover);
 			// 
 			// chk_BlockHKWithCtrl
 			// 
@@ -392,7 +390,6 @@ namespace Mahou
 			this.chk_BlockHKWithCtrl.TabIndex = 12;
 			this.chk_BlockHKWithCtrl.Text = "Block Mahou hotkeys with Ctrl.";
 			this.chk_BlockHKWithCtrl.UseVisualStyleBackColor = true;
-			this.chk_BlockHKWithCtrl.MouseHover += new System.EventHandler(this.Chk_BlockHKWithCtrlMouseHover);
 			// 
 			// chk_FlagsInTray
 			// 
@@ -403,7 +400,6 @@ namespace Mahou
 			this.chk_FlagsInTray.TabIndex = 11;
 			this.chk_FlagsInTray.Text = "Display country flags in tray icon.";
 			this.chk_FlagsInTray.UseVisualStyleBackColor = true;
-			this.chk_FlagsInTray.MouseHover += new System.EventHandler(this.Chk_FlagsInTrayMouseHover);
 			// 
 			// chk_CapsLockDTimer
 			// 
@@ -415,7 +411,6 @@ namespace Mahou
 			this.chk_CapsLockDTimer.Text = "Activate Caps Lock disabler timer.";
 			this.chk_CapsLockDTimer.UseVisualStyleBackColor = true;
 			this.chk_CapsLockDTimer.CheckedChanged += new System.EventHandler(this.Chk_CheckedChanged);
-			this.chk_CapsLockDTimer.MouseHover += new System.EventHandler(this.Chk_CapsLockDTimerMouseHover);
 			// 
 			// chk_Logging
 			// 
@@ -426,7 +421,6 @@ namespace Mahou
 			this.chk_Logging.TabIndex = 9;
 			this.chk_Logging.Text = "Enable logging for debugging.";
 			this.chk_Logging.UseVisualStyleBackColor = true;
-			this.chk_Logging.MouseHover += new System.EventHandler(this.Chk_LoggingMouseHover);
 			// 
 			// chk_StartupUpdatesCheck
 			// 
@@ -448,7 +442,6 @@ namespace Mahou
 			this.chk_HighlightScroll.Text = "Highlight Scroll-Lock when layout 1 is active.";
 			this.chk_HighlightScroll.UseVisualStyleBackColor = true;
 			this.chk_HighlightScroll.CheckedChanged += new System.EventHandler(this.Chk_CheckedChanged);
-			this.chk_HighlightScroll.MouseHover += new System.EventHandler(this.Chk_HighlightScrollMouseHover);
 			// 
 			// chk_CSLayoutSwitchingPlus
 			// 
@@ -459,7 +452,6 @@ namespace Mahou
 			this.chk_CSLayoutSwitchingPlus.TabIndex = 6;
 			this.chk_CSLayoutSwitchingPlus.Text = "Convert selection layout switching+ (experimental).";
 			this.chk_CSLayoutSwitchingPlus.UseVisualStyleBackColor = true;
-			this.chk_CSLayoutSwitchingPlus.MouseHover += new System.EventHandler(this.Chk_CSLayoutSwitchingPlusMouseHover);
 			// 
 			// chk_AddOneSpace
 			// 
@@ -470,7 +462,6 @@ namespace Mahou
 			this.chk_AddOneSpace.TabIndex = 5;
 			this.chk_AddOneSpace.Text = "Add one space to last word.";
 			this.chk_AddOneSpace.UseVisualStyleBackColor = true;
-			this.chk_AddOneSpace.MouseHover += new System.EventHandler(this.Chk_AddOneSpaceMouseHover);
 			// 
 			// chk_RePress
 			// 
@@ -481,7 +472,6 @@ namespace Mahou
 			this.chk_RePress.TabIndex = 4;
 			this.chk_RePress.Text = "Re-press modifiers after hotkey action.";
 			this.chk_RePress.UseVisualStyleBackColor = true;
-			this.chk_RePress.MouseHover += new System.EventHandler(this.Chk_RePressMouseHover);
 			// 
 			// chk_ReSelect
 			// 
@@ -492,7 +482,6 @@ namespace Mahou
 			this.chk_ReSelect.TabIndex = 3;
 			this.chk_ReSelect.Text = "Re-select text after convert selection.";
 			this.chk_ReSelect.UseVisualStyleBackColor = true;
-			this.chk_ReSelect.MouseHover += new System.EventHandler(this.Chk_ReSelectMouseHover);
 			// 
 			// chk_CSLayoutSwitching
 			// 
@@ -504,7 +493,6 @@ namespace Mahou
 			this.chk_CSLayoutSwitching.Text = "Convert selection layout switching.";
 			this.chk_CSLayoutSwitching.UseVisualStyleBackColor = true;
 			this.chk_CSLayoutSwitching.CheckedChanged += new System.EventHandler(this.Chk_CheckedChanged);
-			this.chk_CSLayoutSwitching.MouseHover += new System.EventHandler(this.Chk_CSLayoutSwitchingMouseHover);
 			// 
 			// chk_TrayIcon
 			// 
@@ -769,7 +757,6 @@ namespace Mahou
 			this.chk_EmulateLS.Text = "Emulate layout switching.";
 			this.chk_EmulateLS.UseVisualStyleBackColor = true;
 			this.chk_EmulateLS.CheckedChanged += new System.EventHandler(this.Chk_CheckedChanged);
-			this.chk_EmulateLS.MouseHover += new System.EventHandler(this.Chk_EmulateLSMouseHover);
 			// 
 			// lbl_LayoutNum2
 			// 
@@ -817,7 +804,6 @@ namespace Mahou
 			this.chk_SwitchBetweenLayouts.Text = "Switch between layouts:";
 			this.chk_SwitchBetweenLayouts.UseVisualStyleBackColor = true;
 			this.chk_SwitchBetweenLayouts.CheckedChanged += new System.EventHandler(this.Chk_CheckedChanged);
-			this.chk_SwitchBetweenLayouts.MouseHover += new System.EventHandler(this.Chk_SwitchBetweenLayoutsMouseHover);
 			// 
 			// tab_appearence
 			// 
@@ -867,7 +853,6 @@ namespace Mahou
 			this.chk_LangTTDiffLayoutColors.TabIndex = 13;
 			this.chk_LangTTDiffLayoutColors.Text = "Use different appearence for layouts.";
 			this.chk_LangTTDiffLayoutColors.UseVisualStyleBackColor = true;
-			this.chk_LangTTDiffLayoutColors.MouseHover += new System.EventHandler(this.Chk_LangTTDiffLayoutColorsMouseHover);
 			// 
 			// chk_LangTTCaretOnChange
 			// 
@@ -878,7 +863,6 @@ namespace Mahou
 			this.chk_LangTTCaretOnChange.TabIndex = 12;
 			this.chk_LangTTCaretOnChange.Text = "Display only on layout change.";
 			this.chk_LangTTCaretOnChange.UseVisualStyleBackColor = true;
-			this.chk_LangTTCaretOnChange.MouseHover += new System.EventHandler(this.Chk_LangTTOnChange);
 			// 
 			// chk_LangTTMouseOnChange
 			// 
@@ -889,7 +873,6 @@ namespace Mahou
 			this.chk_LangTTMouseOnChange.TabIndex = 11;
 			this.chk_LangTTMouseOnChange.Text = "Display only on layout change.";
 			this.chk_LangTTMouseOnChange.UseVisualStyleBackColor = true;
-			this.chk_LangTTMouseOnChange.MouseHover += new System.EventHandler(this.Chk_LangTTOnChange);
 			// 
 			// grb_LangTTAppearence
 			// 
@@ -918,7 +901,6 @@ namespace Mahou
 			this.txt_LangTTText.Size = new System.Drawing.Size(117, 23);
 			this.txt_LangTTText.TabIndex = 10;
 			this.txt_LangTTText.TextChanged += new System.EventHandler(this.Txt_LangTTTextTextChanged);
-			this.txt_LangTTText.MouseHover += new System.EventHandler(this.Txt_LangTTTextMouseHover);
 			// 
 			// lbl_LangTTText
 			// 
@@ -1106,7 +1088,6 @@ namespace Mahou
 			this.chk_LangTooltipCaret.Text = "Display current language tooltip around caret.";
 			this.chk_LangTooltipCaret.UseVisualStyleBackColor = true;
 			this.chk_LangTooltipCaret.CheckedChanged += new System.EventHandler(this.Chk_CheckedChanged);
-			this.chk_LangTooltipCaret.MouseHover += new System.EventHandler(this.Chk_LangTooltipCaretMouseHover);
 			// 
 			// chk_LangTooltipMouse
 			// 
@@ -1118,7 +1099,6 @@ namespace Mahou
 			this.chk_LangTooltipMouse.Text = "Display current language tooltip around mouse.";
 			this.chk_LangTooltipMouse.UseVisualStyleBackColor = true;
 			this.chk_LangTooltipMouse.CheckedChanged += new System.EventHandler(this.Chk_CheckedChanged);
-			this.chk_LangTooltipMouse.MouseHover += new System.EventHandler(this.Chk_LangTooltipMouseMouseHover);
 			// 
 			// tab_timings
 			// 
@@ -1154,7 +1134,6 @@ namespace Mahou
 			this.lbl_ExcludedPrograms.Size = new System.Drawing.Size(111, 15);
 			this.lbl_ExcludedPrograms.TabIndex = 22;
 			this.lbl_ExcludedPrograms.Text = "Excluded programs:";
-			this.lbl_ExcludedPrograms.MouseHover += new System.EventHandler(this.ExcludedProgramsMouseHover);
 			// 
 			// txt_ExcludedPrograms
 			// 
@@ -1388,7 +1367,6 @@ namespace Mahou
 			this.chk_Snippets.Text = "Enable snippets.";
 			this.chk_Snippets.UseVisualStyleBackColor = true;
 			this.chk_Snippets.CheckedChanged += new System.EventHandler(this.Chk_CheckedChanged);
-			this.chk_Snippets.MouseHover += new System.EventHandler(this.Chk_SnippetsMouseHover);
 			// 
 			// tab_hotkeys
 			// 
@@ -1610,13 +1588,13 @@ namespace Mahou
 			// 
 			// txt_UpdateDetails
 			// 
+			this.txt_UpdateDetails.BackColor = System.Drawing.Color.White;
 			this.txt_UpdateDetails.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.txt_UpdateDetails.Font = new System.Drawing.Font("Segoe UI Symbol", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.txt_UpdateDetails.Location = new System.Drawing.Point(3, 19);
 			this.txt_UpdateDetails.Multiline = true;
-			this.txt_UpdateDetails.ReadOnly = true;
-			this.txt_UpdateDetails.BackColor = System.Drawing.Color.White;
 			this.txt_UpdateDetails.Name = "txt_UpdateDetails";
+			this.txt_UpdateDetails.ReadOnly = true;
 			this.txt_UpdateDetails.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.txt_UpdateDetails.Size = new System.Drawing.Size(295, 213);
 			this.txt_UpdateDetails.TabIndex = 0;
@@ -1661,11 +1639,11 @@ namespace Mahou
 			// 
 			// txt_Help
 			// 
+			this.txt_Help.BackColor = System.Drawing.Color.White;
 			this.txt_Help.Location = new System.Drawing.Point(0, 0);
 			this.txt_Help.Multiline = true;
 			this.txt_Help.Name = "txt_Help";
 			this.txt_Help.ReadOnly = true;
-			this.txt_Help.BackColor = System.Drawing.Color.White;
 			this.txt_Help.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.txt_Help.Size = new System.Drawing.Size(559, 246);
 			this.txt_Help.TabIndex = 5;
@@ -1759,12 +1737,12 @@ namespace Mahou
 			// 
 			// HelpMeUnderstand
 			// 
-			this.HelpMeUnderstand.AutomaticDelay = 20000;
-			this.HelpMeUnderstand.AutoPopDelay = 200000;
-			this.HelpMeUnderstand.InitialDelay = 20000;
-			this.HelpMeUnderstand.ReshowDelay = 500;
+			this.HelpMeUnderstand.AutoPopDelay = 20000;
+			this.HelpMeUnderstand.InitialDelay = 500;
+			this.HelpMeUnderstand.ReshowDelay = 100;
 			this.HelpMeUnderstand.ShowAlways = true;
 			this.HelpMeUnderstand.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+			this.HelpMeUnderstand.Popup += new System.Windows.Forms.PopupEventHandler(this.HelpMeUnderstandPopup);
 			// 
 			// MahouUI
 			// 

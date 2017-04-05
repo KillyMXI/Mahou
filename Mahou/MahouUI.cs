@@ -106,7 +106,6 @@ namespace Mahou {
 		/// Temporary specific keys.
 		/// </summary>
 		public int Key1, Key2, Key3, Key4;
-		public string Lang = "";
 		#endregion
 		public TrayIcon icon;
 		public Timer ICheck = new Timer();
@@ -135,7 +134,7 @@ namespace Mahou {
 		    nud_CapsLockRefreshRate.Minimum = nud_DoubleHK2ndPressWaitTime.Minimum =
 		        nud_LangTTCaretRefreshRate.Minimum = nud_LangTTMouseRefreshRate.Minimum = 
 		    	nud_ScrollLockRefreshRate.Minimum = nud_TrayFlagRefreshRate.Minimum = 1;
-			Text = "Mahou " + Assembly.GetExecutingAssembly().GetName().Version + "-dev";
+			Text = "Mahou " + Assembly.GetExecutingAssembly().GetName().Version;
 			nud_LangTTPositionX.Minimum = nud_LangTTPositionY.Minimum = -100;
 			RegisterRestartHotkey();
 			RefreshAllIcons();
@@ -439,20 +438,21 @@ DEL %MAHOUDIR%RestartMahou.cmd";
 			MMain.MyConfs.Write("Layouts", "SwitchBetweenLayouts", chk_SwitchBetweenLayouts.Checked.ToString());
 			MMain.MyConfs.Write("Layouts", "EmulateLayoutSwitch", chk_EmulateLS.Checked.ToString());
 			MMain.MyConfs.Write("Layouts", "ChangeToSpecificLayoutByKey", chk_SpecificLS.Checked.ToString());
-			try {
-			MMain.MyConfs.Write("Layouts", "MainLayout1", cbb_MainLayout1.SelectedItem.ToString());
-			MMain.MyConfs.Write("Layouts", "MainLayout2", cbb_MainLayout2.SelectedItem.ToString());	
-			MMain.MyConfs.Write("Layouts", "EmulateLayoutSwitchType", cbb_EmulateType.SelectedItem.ToString());		
 			// Keys
 			MMain.MyConfs.Write("Layouts", "SpecificKey1", cbb_Key1.SelectedIndex.ToString());
 			MMain.MyConfs.Write("Layouts", "SpecificKey2", cbb_Key2.SelectedIndex.ToString());
 			MMain.MyConfs.Write("Layouts", "SpecificKey3", cbb_Key3.SelectedIndex.ToString());
 			MMain.MyConfs.Write("Layouts", "SpecificKey4", cbb_Key4.SelectedIndex.ToString());
-			// Layouts			
-			MMain.MyConfs.Write("Layouts", "SpecificLayout1", cbb_Layout1.SelectedItem.ToString());
-			MMain.MyConfs.Write("Layouts", "SpecificLayout2", cbb_Layout2.SelectedItem.ToString());
-			MMain.MyConfs.Write("Layouts", "SpecificLayout3", cbb_Layout3.SelectedItem.ToString());
-			MMain.MyConfs.Write("Layouts", "SpecificLayout4", cbb_Layout4.SelectedItem.ToString());
+			try {
+				try { MMain.MyConfs.Write("Layouts", "EmulateLayoutSwitchType", cbb_EmulateType.SelectedItem.ToString()); } catch { }
+				// Main Layouts
+				try { MMain.MyConfs.Write("Layouts", "MainLayout1", cbb_MainLayout1.SelectedItem.ToString()); } catch { }
+				try { MMain.MyConfs.Write("Layouts", "MainLayout2", cbb_MainLayout2.SelectedItem.ToString()); } catch { }
+				// Layouts
+				try { MMain.MyConfs.Write("Layouts", "SpecificLayout1", cbb_Layout1.SelectedItem.ToString()); } catch { }
+				try { MMain.MyConfs.Write("Layouts", "SpecificLayout2", cbb_Layout2.SelectedItem.ToString()); } catch { }
+				try { MMain.MyConfs.Write("Layouts", "SpecificLayout3", cbb_Layout3.SelectedItem.ToString()); } catch { }
+				try { MMain.MyConfs.Write("Layouts", "SpecificLayout4", cbb_Layout4.SelectedItem.ToString()); } catch { }
 			} catch { Logging.Log("Some settings in layouts tab failed to save, they are skipped."); }
 			#endregion
 			#region Appearence
@@ -502,7 +502,8 @@ DEL %MAHOUDIR%RestartMahou.cmd";
 		/// Refresh all controls state from configs.
 		/// </summary>
 		void LoadConfigs() {
-			Lang = MMain.MyConfs.Read("Appearence", "Language");
+			InitLanguage();
+			RefreshLanguage();
 			#region Functions
 			chk_AutoStart.Checked = File.Exists(Path.Combine(
 				Environment.GetFolderPath(Environment.SpecialFolder.Startup),
@@ -580,7 +581,6 @@ DEL %MAHOUDIR%RestartMahou.cmd";
 			#endregion
 			InitializeHotkeys();
 			InitializeTimers();
-			RefreshLanguage();
 			ToggleDependentControlsEnabledState();
 			RefreshAllIcons();
 			// Unregister Restart Hotkey
@@ -602,18 +602,10 @@ DEL %MAHOUDIR%RestartMahou.cmd";
 			cbb_MainLayout1.Items.Clear();
 			cbb_MainLayout2.Items.Clear();
 			MMain.lcnmid.Clear();
-			if (Lang == "English") {
-				cbb_Layout1.Items.Add(Languages.English.SwitchBetween);
-				cbb_Layout2.Items.Add(Languages.English.SwitchBetween);
-				cbb_Layout3.Items.Add(Languages.English.SwitchBetween);
-				cbb_Layout4.Items.Add(Languages.English.SwitchBetween);
-			}
-			if (Lang == "Русский") {
-				cbb_Layout1.Items.Add(Languages.Russian.SwitchBetween);
-				cbb_Layout2.Items.Add(Languages.Russian.SwitchBetween);
-				cbb_Layout3.Items.Add(Languages.Russian.SwitchBetween);
-				cbb_Layout4.Items.Add(Languages.Russian.SwitchBetween);
-			}
+			cbb_Layout1.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
+			cbb_Layout2.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
+			cbb_Layout3.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
+			cbb_Layout4.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
 			foreach (Locales.Locale lc in MMain.locales) {
 				cbb_Layout1.Items.Add(lc.Lang + "(" + lc.uId + ")");
 				cbb_Layout2.Items.Add(lc.Lang + "(" + lc.uId + ")");
@@ -624,7 +616,7 @@ DEL %MAHOUDIR%RestartMahou.cmd";
 				MMain.lcnmid.Add(lc.Lang + "(" + lc.uId + ")");
 			}
 			try {
-				cbb_Language.SelectedIndex = cbb_Language.Items.IndexOf(Lang);
+				cbb_Language.SelectedIndex = cbb_Language.Items.IndexOf(MMain._language);
 				EmulateLSType = MMain.MyConfs.Read("Layouts", "EmulateLayoutSwitchType");
 				cbb_EmulateType.SelectedIndex = cbb_EmulateType.Items.IndexOf(EmulateLSType);
 				cbb_Layout1.SelectedIndex = cbb_Layout1.Items.IndexOf(Layout1);
@@ -796,6 +788,16 @@ DEL %MAHOUDIR%RestartMahou.cmd";
 			} else {
 				Logging.Log("Layout id was ["+lcid+"].", 2);
 			}
+		}
+		/// <summary>
+		/// Initializes UI language.
+		/// </summary>
+		public static void InitLanguage() {
+			MMain._language = MMain.MyConfs.Read("Appearence", "Language");
+			if (MMain._language == "English")
+				MMain.Lang = Languages.English;
+			else if (MMain._language == "Русский")
+				MMain.Lang = Languages.Russian;
 		}
 		/// <summary>
 		/// Initializes language tooltips.
@@ -1157,27 +1159,15 @@ DEL %MAHOUDIR%RestartMahou.cmd";
 					txt_LangTTText.Enabled = lbl_LangTTText.Enabled = true;
 				chk_LangTTTransparentColor.Enabled = btn_LangTTFont.Enabled = btn_LangTTForegroundColor.Enabled = 
 					btn_LangTTBackgroundColor.Enabled = lbl_LangTTBackgroundColor.Enabled = lbl_LangTTForegroundColor.Enabled = true;
-				if (Lang == "English") {
-					grb_LangTTSize.Text = Languages.English.LDSize;
-					lbl_LangTTWidth.Text = Languages.English.LDWidth;
-					lbl_LangTTHeight.Text = Languages.English.LDHeight;
-				} else if (Lang == "Русский") {
-					grb_LangTTSize.Text = Languages.Russian.LDSize;
-					lbl_LangTTWidth.Text = Languages.Russian.LDWidth;
-					lbl_LangTTHeight.Text = Languages.Russian.LDHeight;
-				}
+				grb_LangTTSize.Text = MMain.Lang[Languages.Element.LDSize];
+				lbl_LangTTWidth.Text = MMain.Lang[Languages.Element.LDWidth];
+				lbl_LangTTHeight.Text = MMain.Lang[Languages.Element.LDHeight];
 			} else {
 				chk_LangTTTransparentColor.Enabled = btn_LangTTFont.Enabled = btn_LangTTForegroundColor.Enabled = 
 					btn_LangTTBackgroundColor.Enabled = lbl_LangTTBackgroundColor.Enabled = lbl_LangTTForegroundColor.Enabled = false;
-				if (Lang == "English") {
-						grb_LangTTSize.Text = Languages.English.LDPosition;
-						lbl_LangTTWidth.Text = Languages.English.MCDSTopIndent;
-						lbl_LangTTHeight.Text = Languages.English.MCDSBottomIndent;
-					} else if (Lang == "Русский") {
-						grb_LangTTSize.Text = Languages.Russian.LDPosition;
-						lbl_LangTTWidth.Text = Languages.Russian.MCDSTopIndent;
-						lbl_LangTTHeight.Text = Languages.Russian.MCDSBottomIndent;
-					}
+				grb_LangTTSize.Text =  MMain.Lang[Languages.Element.LDPosition];
+				lbl_LangTTWidth.Text =  MMain.Lang[Languages.Element.MCDSTopIndent];
+				lbl_LangTTHeight.Text =  MMain.Lang[Languages.Element.MCDSBottomIndent];
 			}
 			lbl_LangTTWidth.Text += ":";
 			lbl_LangTTHeight.Text += ":";
@@ -1539,7 +1529,7 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 						            "<h1 class=\"release-title\">\n.*<a href=\".*\">(.*)</a>").Groups[1].Value;
 					var Description = Regex.Replace(Regex.Match(data,
                                            //These looks unsafe, but really they works!
-						                  "<div class=\"markdown-body\">\n\\s+(.+?)</div>",
+						                  "<div class=\"markdown-body\">\n\\s+(.+?)[\\n\\s]+</div>",
 						                  RegexOptions.IgnoreCase | RegexOptions.Singleline).Groups[1].Value, "<[^>]*>", "");
 					var Version = Regex.Match(data, "<span class=\"css-truncate-target\">(.*)</span>").Groups[1].Value;
 					var Link = "https://github.com" + Regex.Match(data,
@@ -1556,18 +1546,11 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 				}
 			} catch {
 				Logging.Log("Check for updates failed, error message:", 1);
-				if (Lang == "Русский")
-					Info = new List<string>{
-						Languages.Russian.Error,
-						Languages.Russian.NetError,
-						"ERROR"
-					};
-				if (Lang == "English")
-					Info = new List<string>{
-						Languages.English.Error,
-						Languages.English.NetError,
-						"ERROR"
-					};
+				Info = new List<string>{
+						MMain.Lang[Languages.Element.Error],
+						MMain.Lang[Languages.Element.NetError],
+						MMain.Lang[Languages.Element.Error]
+				};
 			}
 			UpdInfo = Info.ToArray();
 		}
@@ -1622,250 +1605,160 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 			txt_UpdateDetails.Text = UpdInfo[1];
 			btn_DownloadUpdate.Text = Regex.Replace(btn_DownloadUpdate.Text, @"\<.+?\>", UpdInfo[2]);
 		}
+		#endregion
 		/// <summary>
 		/// Refreshes language.
 		/// </summary>
 		void RefreshLanguage() {
-				if (Lang == "Русский") {
-				#region Tabs
-				tab_functions.Text = Languages.Russian.tab_Functions;
-				tab_layouts.Text = Languages.Russian.tab_Layouts;
-				tab_appearence.Text = Languages.Russian.tab_Appearence;
-				tab_timings.Text = Languages.Russian.tab_Timings;
-				tab_snippets.Text = Languages.Russian.tab_Snippets;
-				tab_hotkeys.Text = Languages.Russian.tab_Hotkeys;
-				tab_updates.Text = Languages.Russian.tab_Updates;
-				tab_about.Text = Languages.Russian.tab_About;
-				lnk_plugin.Text = "ST3 " + Languages.Russian.Plugin;
-				chk_OneLayoutWholeWord.Text = Languages.Russian.OneLayoutWholeWord;
-				#endregion
-				#region Functions
-				chk_AutoStart.Text = Languages.Russian.AutoStart;
-				chk_TrayIcon.Text = Languages.Russian.TrayIcon;
-				chk_CSLayoutSwitching.Text = Languages.Russian.ConvertSelectionLS;
-				chk_ReSelect.Text = Languages.Russian.ReSelect;
-				chk_RePress.Text = Languages.Russian.RePress;
-				chk_AddOneSpace.Text = Languages.Russian.Add1Space;
-				chk_CSLayoutSwitchingPlus.Text = Languages.Russian.ConvertSelectionLSPlus;
-				chk_HighlightScroll.Text = Languages.Russian.HighlightScroll;
-				chk_StartupUpdatesCheck.Text = Languages.Russian.UpdatesCheck;
-				chk_Logging.Text = Languages.Russian.Logging;
-				chk_CapsLockDTimer.Text = Languages.Russian.CapsTimer;
-				chk_FlagsInTray.Text = Languages.Russian.ContryFlags;
-				chk_BlockHKWithCtrl.Text = Languages.Russian.BlockCtrlHKs;
-				chk_MCDS_support.Text = Languages.Russian.MCDSSupport;
-				#endregion
-				#region Layouts
-				chk_SwitchBetweenLayouts.Text = Languages.Russian.SwitchBetween+":";
-				chk_EmulateLS.Text = Languages.Russian.EmulateLS;
-				lbl_EmuType.Text = Languages.Russian.EmulateType;
-				chk_SpecificLS.Text = Languages.Russian.ChangeLayoutBy1Key;
-				grb_Layouts.Text = Languages.Russian.Layouts;
-				grb_Keys.Text = Languages.Russian.Keys;
-				#endregion
-				#region Appearence
-				chk_LangTooltipMouse.Text = Languages.Russian.LDMouseDisplay;
-				chk_LangTooltipCaret.Text = Languages.Russian.LDCaretDisplay;
-				chk_LangTTCaretOnChange.Text = chk_LangTTMouseOnChange.Text = Languages.Russian.LDOnlyOnChange;
-				lbl_Language.Text = Languages.Russian.Language;
-				chk_LangTTDiffLayoutColors.Text = Languages.Russian.LDDifferentAppearence;
-				grb_LangTTAppearence.Text = Languages.Russian.LDAppearence;
-				btn_LangTTFont.Text = Languages.Russian.LDFont;
-				lbl_LangTTForegroundColor.Text = Languages.Russian.LDFore;
-				lbl_LangTTBackgroundColor.Text = Languages.Russian.LDBack;
-				lbl_LangTTText.Text = Languages.Russian.LDText;
-				grb_LangTTSize.Text = Languages.Russian.LDSize;
-				grb_LangTTPositon.Text = Languages.Russian.LDPosition;
-				lbl_LangTTHeight.Text = Languages.Russian.LDHeight;
-				lbl_LangTTWidth.Text = Languages.Russian.LDWidth;
-				chk_LangTTTransparentColor.Text = Languages.Russian.LDTransparentBG;
-				lsb_LangTTAppearenceForList.Items.Clear();
-				lsb_LangTTAppearenceForList.Items.AddRange(new [] {
-				                                           	Languages.Russian.Layout + " 1",
-				                                           	Languages.Russian.Layout + " 2",
-				                                           	Languages.Russian.LDAroundMouse,
-				                                           	Languages.Russian.LDAroundCaret,
-				                                           	"MCDS"
-				                                           });
-				#endregion
-				#region Timings
-				lbl_LangTTMouseRefreshRate.Text = Languages.Russian.LDForMouseRefreshRate;
-				lbl_LangTTCaretRefreshRate.Text = Languages.Russian.LDForCaretRefreshRate;
-				lbl_DoubleHK2ndPressWaitTime.Text = Languages.Russian.DoubleHKDelay;
-				lbl_FlagTrayRefreshRate.Text = Languages.Russian.ContryFlags;
-				lbl_ScrollLockRefreshRate.Text = Languages.Russian.ScrollLockRefreshRate;
-				lbl_CapsLockRefreshRate.Text = Languages.Russian.CapsLockRefreshRate;
-				chk_SelectedTextGetMoreTries.Text = Languages.Russian.MoreTriesToGetSelectedText;
-				lbl_ExcludedPrograms.Text =  Languages.Russian.ExcludedPrograms;
-				#endregion
-				#region Snippets
-				chk_Snippets.Text = Languages.Russian.SnippetsEnabled;
-				#endregion
-				#region Hotkeys
-				grb_Hotkey.Text = Languages.Russian.Hotkey;
-				chk_HotKeyEnabled.Text = Languages.Russian.Enabled;
-				chk_DoubleHotkey.Text = Languages.Russian.DoubleHK;
-				lsb_Hotkeys.Items.Clear();
-				lsb_Hotkeys.Items.AddRange(new []{
-				                           	Languages.Russian.ToggleMainWnd,
-				                           	Languages.Russian.ConvertLast,
-				                           	Languages.Russian.ConvertSelected,
-				                           	Languages.Russian.ConvertLine,
-				                           	Languages.Russian.ConvertWords,
-				                           	Languages.Russian.ToggleSymbolIgnore,
-				                           	Languages.Russian.SelectedToTitleCase,
-				                           	Languages.Russian.SelectedToRandomCase,
-				                           	Languages.Russian.SelectedToSwapCase,
-				                           	Languages.Russian.SelectedTransliteration,
-				                           	Languages.Russian.ExitMahou,
-				                           	Languages.Russian.RestartMahou
-				                           });
-				#endregion
-				#region Updtaes
-				btn_CheckForUpdates.Text = Languages.Russian.CheckForUpdates;
-				btn_DownloadUpdate.Text = Languages.Russian.UpdateMahou;
-				grb_DownloadUpdate.Text = Languages.Russian.DownloadUpdate;
-				grb_ProxyConfig.Text = Languages.Russian.ProxyConfig;
-				lbl_ProxyServerPort.Text = Languages.Russian.ProxyServer;
-				lbl_ProxyLogin.Text = Languages.Russian.ProxyLogin;
-				lbl_ProxyPassword.Text = Languages.Russian.ProxyPass;
-				#endregion
-				#region About
-				btn_DebugInfo.Text = Languages.Russian.DbgInf;
-				lnk_Site.Text = Languages.Russian.Site;
-				lnk_Releases.Text = Languages.Russian.Releases;
-				txt_Help.Text = Languages.Russian.Mahou + "\r\n" + Languages.Russian.About;
-				#endregion
-				#region Buttons
-				btn_Apply.Text = Languages.Russian.ButtonApply;
-				btn_Cancel.Text = Languages.Russian.ButtonCancel;
-				btn_OK.Text = Languages.Russian.ButtonOK;
-				#endregion
-				#region Misc
-				icon.RefreshText(Languages.Russian.Mahou, Languages.Russian.ShowHide, Languages.Russian.ExitMahou);
-				#endregion
-            } else {
-
-				#region Tabs
-				tab_functions.Text = Languages.English.tab_Functions;
-				tab_layouts.Text = Languages.English.tab_Layouts;
-				tab_appearence.Text = Languages.English.tab_Appearence;
-				tab_timings.Text = Languages.English.tab_Timings;
-				tab_snippets.Text = Languages.English.tab_Snippets;
-				tab_hotkeys.Text = Languages.English.tab_Hotkeys;
-				tab_updates.Text = Languages.English.tab_Updates;
-				tab_about.Text = Languages.English.tab_About;
-				#endregion
-				#region Functions
-				chk_AutoStart.Text = Languages.English.AutoStart;
-				chk_TrayIcon.Text = Languages.English.TrayIcon;
-				chk_CSLayoutSwitching.Text = Languages.English.ConvertSelectionLS;
-				chk_ReSelect.Text = Languages.English.ReSelect;
-				chk_RePress.Text = Languages.English.RePress;
-				chk_AddOneSpace.Text = Languages.English.Add1Space;
-				chk_CSLayoutSwitchingPlus.Text = Languages.English.ConvertSelectionLSPlus;
-				chk_HighlightScroll.Text = Languages.English.HighlightScroll;
-				chk_StartupUpdatesCheck.Text = Languages.English.UpdatesCheck;
-				chk_Logging.Text = Languages.English.Logging;
-				chk_CapsLockDTimer.Text = Languages.English.CapsTimer;
-				chk_FlagsInTray.Text = Languages.English.ContryFlags;
-				chk_BlockHKWithCtrl.Text = Languages.English.BlockCtrlHKs;
-				chk_MCDS_support.Text = Languages.English.MCDSSupport;
-				lnk_plugin.Text = "ST3 " + Languages.English.Plugin;
-				chk_OneLayoutWholeWord.Text = Languages.English.OneLayoutWholeWord;
-				#endregion
-				#region Layouts
-				chk_SwitchBetweenLayouts.Text = Languages.English.SwitchBetween+":";
-				chk_EmulateLS.Text = Languages.English.EmulateLS;
-				lbl_EmuType.Text = Languages.English.EmulateType;
-				chk_SpecificLS.Text = Languages.English.ChangeLayoutBy1Key;
-				grb_Layouts.Text = Languages.English.Layouts;
-				grb_Keys.Text = Languages.English.Keys;
-				#endregion
-				#region Appearence
-				chk_LangTooltipMouse.Text = Languages.English.LDMouseDisplay;
-				chk_LangTooltipCaret.Text = Languages.English.LDCaretDisplay;
-				chk_LangTTCaretOnChange.Text = chk_LangTTMouseOnChange.Text = Languages.English.LDOnlyOnChange;
-				lbl_Language.Text = Languages.English.Language;
-				chk_LangTTDiffLayoutColors.Text = Languages.English.LDDifferentAppearence;
-				grb_LangTTAppearence.Text = Languages.English.LDAppearence;
-				btn_LangTTFont.Text = Languages.English.LDFont;
-				lbl_LangTTForegroundColor.Text = Languages.English.LDFore;
-				lbl_LangTTBackgroundColor.Text = Languages.English.LDBack;
-				lbl_LangTTText.Text = Languages.English.LDText;
-				grb_LangTTSize.Text = Languages.English.LDSize;
-				grb_LangTTPositon.Text = Languages.English.LDPosition;
-				lbl_LangTTHeight.Text = Languages.English.LDHeight;
-				lbl_LangTTWidth.Text = Languages.English.LDWidth;
-				chk_LangTTTransparentColor.Text = Languages.English.LDTransparentBG;
-				lsb_LangTTAppearenceForList.Items.Clear();
-				lsb_LangTTAppearenceForList.Items.AddRange(new [] {
-				                                           	Languages.English.Layout + " 1",
-				                                           	Languages.English.Layout + " 2",
-				                                           	Languages.English.LDAroundMouse,
-				                                           	Languages.English.LDAroundCaret,
-				                                           	"MCDS"
-				                                           });
-				#endregion
-				#region Timings
-				lbl_LangTTMouseRefreshRate.Text = Languages.English.LDForMouseRefreshRate;
-				lbl_LangTTCaretRefreshRate.Text = Languages.English.LDForCaretRefreshRate;
-				lbl_DoubleHK2ndPressWaitTime.Text = Languages.English.DoubleHKDelay;
-				lbl_FlagTrayRefreshRate.Text = Languages.English.ContryFlags;
-				lbl_ScrollLockRefreshRate.Text = Languages.English.ScrollLockRefreshRate;
-				lbl_CapsLockRefreshRate.Text = Languages.English.CapsLockRefreshRate;
-				chk_SelectedTextGetMoreTries.Text = Languages.English.MoreTriesToGetSelectedText;
-				lbl_ExcludedPrograms.Text =  Languages.English.ExcludedPrograms;
-				#endregion
-				#region Snippets
-				chk_Snippets.Text = Languages.English.SnippetsEnabled;
-				#endregion
-				#region Hotkeys
-				grb_Hotkey.Text = Languages.English.Hotkey;
-				chk_HotKeyEnabled.Text = Languages.English.Enabled;
-				chk_DoubleHotkey.Text = Languages.English.DoubleHK;
-				lsb_Hotkeys.Items.Clear();
-				lsb_Hotkeys.Items.AddRange(new []{
-				                           	Languages.English.ToggleMainWnd,
-				                           	Languages.English.ConvertLast,
-				                           	Languages.English.ConvertSelected,
-				                           	Languages.English.ConvertLine,
-				                           	Languages.English.ConvertWords,
-				                           	Languages.English.ToggleSymbolIgnore,
-				                           	Languages.English.SelectedToTitleCase,
-				                           	Languages.English.SelectedToRandomCase,
-				                           	Languages.English.SelectedToSwapCase,
-				                           	Languages.English.SelectedTransliteration,
-				                           	Languages.English.ExitMahou,
-				                           	Languages.English.RestartMahou
-				                           });
-				#endregion
-				#region Updtaes
-				btn_CheckForUpdates.Text = Languages.English.CheckForUpdates;
-				btn_DownloadUpdate.Text = Languages.English.UpdateMahou;
-				grb_DownloadUpdate.Text = Languages.English.DownloadUpdate;
-				grb_ProxyConfig.Text = Languages.English.ProxyConfig;
-				lbl_ProxyServerPort.Text = Languages.English.ProxyServer;
-				lbl_ProxyLogin.Text = Languages.English.ProxyLogin;
-				lbl_ProxyPassword.Text = Languages.English.ProxyPass;
-				#endregion
-				#region About
-				btn_DebugInfo.Text = Languages.English.DbgInf;
-				lnk_Site.Text = Languages.English.Site;
-				lnk_Releases.Text = Languages.English.Releases;
-				txt_Help.Text = Languages.English.Mahou + "\r\n" + Languages.English.About;
-				#endregion
-				#region Buttons
-				btn_Apply.Text = Languages.English.ButtonApply;
-				btn_Cancel.Text = Languages.English.ButtonCancel;
-				btn_OK.Text = Languages.English.ButtonOK;
-				#endregion
-				#region Misc
-				icon.RefreshText(Languages.English.Mahou, "Show/Hide", Languages.English.ExitMahou);
-				#endregion
-			}
+			#region Tabs
+			tab_functions.Text = MMain.Lang[Languages.Element.tab_Functions];
+			tab_layouts.Text = MMain.Lang[Languages.Element.tab_Layouts];
+			tab_appearence.Text = MMain.Lang[Languages.Element.tab_Appearence];
+			tab_timings.Text = MMain.Lang[Languages.Element.tab_Timings];
+			tab_snippets.Text = MMain.Lang[Languages.Element.tab_Snippets];
+			tab_hotkeys.Text = MMain.Lang[Languages.Element.tab_Hotkeys];
+			tab_updates.Text = MMain.Lang[Languages.Element.tab_Updates];
+			tab_about.Text = MMain.Lang[Languages.Element.tab_About];
+			lnk_plugin.Text = "ST3 " + MMain.Lang[Languages.Element.Plugin];
+			chk_OneLayoutWholeWord.Text = MMain.Lang[Languages.Element.OneLayoutWholeWord];
+			#endregion
+			#region Functions
+			chk_AutoStart.Text = MMain.Lang[Languages.Element.AutoStart];
+			chk_TrayIcon.Text = MMain.Lang[Languages.Element.TrayIcon];
+			chk_CSLayoutSwitching.Text = MMain.Lang[Languages.Element.ConvertSelectionLS];
+			chk_ReSelect.Text = MMain.Lang[Languages.Element.ReSelect];
+			chk_RePress.Text = MMain.Lang[Languages.Element.RePress];
+			chk_AddOneSpace.Text = MMain.Lang[Languages.Element.Add1Space];
+			chk_CSLayoutSwitchingPlus.Text = MMain.Lang[Languages.Element.ConvertSelectionLSPlus];
+			chk_HighlightScroll.Text = MMain.Lang[Languages.Element.HighlightScroll];
+			chk_StartupUpdatesCheck.Text = MMain.Lang[Languages.Element.UpdatesCheck];
+			chk_Logging.Text = MMain.Lang[Languages.Element.Logging];
+			chk_CapsLockDTimer.Text = MMain.Lang[Languages.Element.CapsTimer];
+			chk_FlagsInTray.Text = MMain.Lang[Languages.Element.ContryFlags];
+			chk_BlockHKWithCtrl.Text = MMain.Lang[Languages.Element.BlockCtrlHKs];
+			chk_MCDS_support.Text = MMain.Lang[Languages.Element.MCDSSupport];
+			#endregion
+			#region Layouts
+			chk_SwitchBetweenLayouts.Text = MMain.Lang[Languages.Element.SwitchBetween]+":";
+			chk_EmulateLS.Text = MMain.Lang[Languages.Element.EmulateLS];
+			lbl_EmuType.Text = MMain.Lang[Languages.Element.EmulateType];
+			chk_SpecificLS.Text = MMain.Lang[Languages.Element.ChangeLayoutBy1Key];
+			grb_Layouts.Text = MMain.Lang[Languages.Element.Layouts];
+			grb_Keys.Text = MMain.Lang[Languages.Element.Keys];
+			#endregion
+			#region Appearence
+			chk_LangTooltipMouse.Text = MMain.Lang[Languages.Element.LDMouseDisplay];
+			chk_LangTooltipCaret.Text = MMain.Lang[Languages.Element.LDCaretDisplay];
+			chk_LangTTCaretOnChange.Text = chk_LangTTMouseOnChange.Text = MMain.Lang[Languages.Element.LDOnlyOnChange];
+			lbl_Language.Text = MMain.Lang[Languages.Element.Language];
+			chk_LangTTDiffLayoutColors.Text = MMain.Lang[Languages.Element.LDDifferentAppearence];
+			grb_LangTTAppearence.Text = MMain.Lang[Languages.Element.LDAppearence];
+			btn_LangTTFont.Text = MMain.Lang[Languages.Element.LDFont];
+			lbl_LangTTForegroundColor.Text = MMain.Lang[Languages.Element.LDFore];
+			lbl_LangTTBackgroundColor.Text = MMain.Lang[Languages.Element.LDBack];
+			lbl_LangTTText.Text = MMain.Lang[Languages.Element.LDText];
+			grb_LangTTSize.Text = MMain.Lang[Languages.Element.LDSize];
+			grb_LangTTPositon.Text = MMain.Lang[Languages.Element.LDPosition];
+			lbl_LangTTHeight.Text = MMain.Lang[Languages.Element.LDHeight];
+			lbl_LangTTWidth.Text = MMain.Lang[Languages.Element.LDWidth];
+			chk_LangTTTransparentColor.Text = MMain.Lang[Languages.Element.LDTransparentBG];
+			lsb_LangTTAppearenceForList.Items.Clear();
+			lsb_LangTTAppearenceForList.Items.AddRange(new [] {
+														MMain.Lang[Languages.Element.Layout] + " 1",
+														MMain.Lang[Languages.Element.Layout] + " 2",
+														MMain.Lang[Languages.Element.LDAroundMouse],
+														MMain.Lang[Languages.Element.LDAroundCaret],
+														"MCDS"
+														});
+			#endregion
+			#region Timings
+			lbl_LangTTMouseRefreshRate.Text = MMain.Lang[Languages.Element.LDForMouseRefreshRate];
+			lbl_LangTTCaretRefreshRate.Text = MMain.Lang[Languages.Element.LDForCaretRefreshRate];
+			lbl_DoubleHK2ndPressWaitTime.Text = MMain.Lang[Languages.Element.DoubleHKDelay];
+			lbl_FlagTrayRefreshRate.Text = MMain.Lang[Languages.Element.ContryFlags];
+			lbl_ScrollLockRefreshRate.Text = MMain.Lang[Languages.Element.ScrollLockRefreshRate];
+			lbl_CapsLockRefreshRate.Text = MMain.Lang[Languages.Element.CapsLockRefreshRate];
+			chk_SelectedTextGetMoreTries.Text = MMain.Lang[Languages.Element.MoreTriesToGetSelectedText];
+			lbl_ExcludedPrograms.Text =  MMain.Lang[Languages.Element.ExcludedPrograms];
+			#endregion
+			#region Snippets
+			chk_Snippets.Text = MMain.Lang[Languages.Element.SnippetsEnabled];
+			#endregion
+			#region Hotkeys
+			grb_Hotkey.Text = MMain.Lang[Languages.Element.Hotkey];
+			chk_HotKeyEnabled.Text = MMain.Lang[Languages.Element.Enabled];
+			chk_DoubleHotkey.Text = MMain.Lang[Languages.Element.DoubleHK];
+			lsb_Hotkeys.Items.Clear();
+			lsb_Hotkeys.Items.AddRange(new []{
+										MMain.Lang[Languages.Element.ToggleMainWnd],
+										MMain.Lang[Languages.Element.ConvertLast],
+										MMain.Lang[Languages.Element.ConvertSelected],
+										MMain.Lang[Languages.Element.ConvertLine],
+										MMain.Lang[Languages.Element.ConvertWords],
+										MMain.Lang[Languages.Element.ToggleSymbolIgnore],
+										MMain.Lang[Languages.Element.SelectedToTitleCase],
+										MMain.Lang[Languages.Element.SelectedToRandomCase],
+										MMain.Lang[Languages.Element.SelectedToSwapCase],
+										MMain.Lang[Languages.Element.SelectedTransliteration],
+										MMain.Lang[Languages.Element.ExitMahou],
+										MMain.Lang[Languages.Element.RestartMahou]
+										});
+			#endregion
+			#region Updtaes
+			btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.CheckForUpdates];
+			btn_DownloadUpdate.Text = MMain.Lang[Languages.Element.UpdateMahou];
+			grb_DownloadUpdate.Text = MMain.Lang[Languages.Element.DownloadUpdate];
+			grb_ProxyConfig.Text = MMain.Lang[Languages.Element.ProxyConfig];
+			lbl_ProxyServerPort.Text = MMain.Lang[Languages.Element.ProxyServer];
+			lbl_ProxyLogin.Text = MMain.Lang[Languages.Element.ProxyLogin];
+			lbl_ProxyPassword.Text = MMain.Lang[Languages.Element.ProxyPass];
+			#endregion
+			#region About
+			btn_DebugInfo.Text = MMain.Lang[Languages.Element.DbgInf];
+			lnk_Site.Text = MMain.Lang[Languages.Element.Site];
+			lnk_Releases.Text = MMain.Lang[Languages.Element.Releases];
+			txt_Help.Text = MMain.Lang[Languages.Element.Mahou] + "\r\n" + MMain.Lang[Languages.Element.About];
+			#endregion
+			#region Buttons
+			btn_Apply.Text = MMain.Lang[Languages.Element.ButtonApply];
+			btn_Cancel.Text = MMain.Lang[Languages.Element.ButtonCancel];
+			btn_OK.Text = MMain.Lang[Languages.Element.ButtonOK];
+			#endregion
+			#region Misc
+			icon.RefreshText(MMain.Lang[Languages.Element.Mahou], MMain.Lang[Languages.Element.ShowHide], MMain.Lang[Languages.Element.ExitMahou]);
+			#endregion
 			Logging.Log("Language changed.");
+			SetTooltips();
 		}
+		#region Tooltips
+		void SetTooltips() {
+			HelpMeUnderstand.SetToolTip(chk_CSLayoutSwitching, MMain.Lang[Languages.Element.TT_ConvertSelectionSwitch]);
+			HelpMeUnderstand.SetToolTip(chk_ReSelect, MMain.Lang[Languages.Element.TT_ReSelect]);
+			HelpMeUnderstand.SetToolTip(chk_RePress, MMain.Lang[Languages.Element.TT_RePress]);
+			HelpMeUnderstand.SetToolTip(chk_AddOneSpace, MMain.Lang[Languages.Element.TT_Add1Space]);
+			HelpMeUnderstand.SetToolTip(chk_CSLayoutSwitchingPlus, MMain.Lang[Languages.Element.TT_ConvertSelectionSwitchPlus]);
+			HelpMeUnderstand.SetToolTip(chk_HighlightScroll, MMain.Lang[Languages.Element.TT_ScrollTip]);
+			HelpMeUnderstand.SetToolTip(chk_Logging, MMain.Lang[Languages.Element.TT_Logging]);
+			HelpMeUnderstand.SetToolTip(chk_CapsLockDTimer, MMain.Lang[Languages.Element.TT_CapsDis]);
+			HelpMeUnderstand.SetToolTip(chk_FlagsInTray, MMain.Lang[Languages.Element.TT_CountryFlags]);
+			HelpMeUnderstand.SetToolTip(chk_BlockHKWithCtrl, MMain.Lang[Languages.Element.TT_BlockCtrl]);
+			HelpMeUnderstand.SetToolTip(chk_MCDS_support, MMain.Lang[Languages.Element.TT_MCDSSupport]);
+			HelpMeUnderstand.SetToolTip(chk_OneLayoutWholeWord, MMain.Lang[Languages.Element.TT_OneLayoutWholeWordCS]);
+			HelpMeUnderstand.SetToolTip(chk_SwitchBetweenLayouts, MMain.Lang[Languages.Element.TT_SwitchBetween]);
+			HelpMeUnderstand.SetToolTip(chk_EmulateLS, MMain.Lang[Languages.Element.TT_EmulateLS]);
+			HelpMeUnderstand.SetToolTip(chk_LangTooltipCaret, MMain.Lang[Languages.Element.TT_LDForCaret]);
+			HelpMeUnderstand.SetToolTip(chk_LangTooltipMouse, MMain.Lang[Languages.Element.TT_LDForMouse]);
+			HelpMeUnderstand.SetToolTip(chk_LangTTCaretOnChange, MMain.Lang[Languages.Element.TT_LDOnlyOnChange]);
+			HelpMeUnderstand.SetToolTip(chk_LangTTMouseOnChange, MMain.Lang[Languages.Element.TT_LDOnlyOnChange]);
+			HelpMeUnderstand.SetToolTip(txt_LangTTText, MMain.Lang[Languages.Element.TT_LDText]);
+			HelpMeUnderstand.SetToolTip(chk_LangTTDiffLayoutColors, MMain.Lang[Languages.Element.TT_LDDifferentAppearence]);
+			HelpMeUnderstand.SetToolTip(chk_Snippets, MMain.Lang[Languages.Element.TT_Snippets]);
+			HelpMeUnderstand.SetToolTip(lbl_ExcludedPrograms, MMain.Lang[Languages.Element.TT_ExcludedPrograms]);
+		}
+		void HelpMeUnderstandPopup(object sender, PopupEventArgs e) {
+			HelpMeUnderstand.ToolTipTitle = e.AssociatedControl.Text;
+		}
+		#endregion
 		/// <summary>
 		/// Converts Mahou version string to float.
 		/// </summary>
@@ -1875,7 +1768,6 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 			var justdigs = Regex.Replace(ver, "\\D", "");
 			return float.Parse(justdigs[0] + "." + justdigs.Substring(1), CultureInfo.InvariantCulture);
 		}
-		#endregion
 		#endregion
 		#region Links
 		void Lnk_RepositoryLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
@@ -1955,10 +1847,7 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 				debuginfo += "\r\n</details>";
 				Clipboard.SetText(debuginfo);
 				var btDgtTxtWas = btn_DebugInfo.Text;
-				if (Lang == "English")
-					btn_DebugInfo.Text = Languages.English.DbgInf_Copied;
-				if (Lang == "Русский")
-					btn_DebugInfo.Text = Languages.Russian.DbgInf_Copied;
+				btn_DebugInfo.Text = MMain.Lang[Languages.Element.DbgInf_Copied];
 				var tmr = new Timer();
 				tmr.Tick += (_,__) => { 
 					btn_DebugInfo.Text = btDgtTxtWas;
@@ -2002,16 +1891,10 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 			UpdateHotkeyTemps();
 			switch (lsb_Hotkeys.SelectedIndex) {
 				case 4:
-					if (Lang == "English")
-						lbl_HotkeyHelp.Text = Languages.English.TT_ConvertWords;
-					else if (Lang == "Русский")
-						lbl_HotkeyHelp.Text = Languages.Russian.TT_ConvertWords;
+					lbl_HotkeyHelp.Text = MMain.Lang[Languages.Element.TT_ConvertWords];
 					break;
 				case 5:
-					if (Lang == "English")
-						lbl_HotkeyHelp.Text = Languages.English.TT_SymbolIgnore;
-					else if (Lang == "Русский")
-						lbl_HotkeyHelp.Text = Languages.Russian.TT_SymbolIgnore;
+					lbl_HotkeyHelp.Text = MMain.Lang[Languages.Element.TT_SymbolIgnore];
 					break;
 				default:
 					lbl_HotkeyHelp.Text = "";
@@ -2071,10 +1954,7 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 			if (!checking) {
 				checking = true;
 				var btChkTextWas = btn_CheckForUpdates.Text;
-				if (Lang == "English")
-					btn_CheckForUpdates.Text = "Checking for updates...";
-				if (Lang == "Русский")
-					btn_CheckForUpdates.Text = Languages.Russian.CheckingForUpdates;
+				btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.CheckingForUpdates];
 				UpdInfo = null;
 				System.Threading.Tasks.Task.Factory.StartNew(GetUpdateInfo).Wait();
 				tmr.Tick += (_, __) => {
@@ -2084,24 +1964,18 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 					tmr.Interval = 3000;
 					tmr.Stop();
 				};
-				if (UpdInfo[2] == "ERROR") {
+				if (UpdInfo[2] == MMain.Lang[Languages.Element.Error]) {
 					tmr.Interval = 1000;
 					tmr.Start();
 				} else {
 					if (flVersion("v" + Application.ProductVersion) <
 					   flVersion(UpdInfo[2])) {
-						if (Lang == "English")
-							btn_CheckForUpdates.Text = "I think it is time to update.";
-						if (Lang == "Русский")
-							btn_CheckForUpdates.Text = Languages.Russian.TimeToUpdate;
+						btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.TimeToUpdate];
 						tmr.Start();
 						SetUInfo();
 						grb_DownloadUpdate.Enabled = true;
 					} else {
-						if (Lang == "English")
-							btn_CheckForUpdates.Text = "You have latest version.";
-						if (Lang == "Русский")
-							btn_CheckForUpdates.Text = Languages.Russian.YouHaveLatest;
+						btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.YouHaveLatest];
 						tmr.Start();
 						grb_DownloadUpdate.Enabled = false;
 						SetUInfo();
@@ -2154,176 +2028,6 @@ DEL ""%MAHOUDIR%UpdateMahou.cmd""";
 				}
 			}
 		}
-		#region Tooltips
-		void Chk_CSLayoutSwitchingMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_ConvertSelectionSwitch, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_ConvertSelectionSwitch, chk);
-		}
-		void Chk_ReSelectMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_ReSelect, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_ReSelect, chk);
-		}
-		void Chk_RePressMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_RePress, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_RePress, chk);
-		}
-		void Chk_AddOneSpaceMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_Add1Space, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_Add1Space, chk);
-		}
-		void Chk_CSLayoutSwitchingPlusMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_ConvertSelectionSwitchPlus, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_ConvertSelectionSwitchPlus, chk);
-		}
-		void Chk_HighlightScrollMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_ScrollTip, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_ScrollTip, chk);
-		}
-		void Chk_LoggingMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_Logging, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_Logging, chk);
-		}
-		void Chk_CapsLockDTimerMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_CapsDis, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_CapsDis, chk);
-		}
-		void Chk_FlagsInTrayMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_CountryFlags, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_CountryFlags, chk);
-		}
-		void Chk_SwitchBetweenLayoutsMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_SwitchBetween, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_SwitchBetween, chk);
-		}
-		void Chk_EmulateLSMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_EmulateLS, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_EmulateLS, chk);
-		}
-		void Chk_LangTooltipMouseMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_LDForMouse, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_LDForMouse, chk);
-		}
-		void Chk_LangTooltipCaretMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_LDForCaret, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_LDForCaret, chk);
-		}
-		void Chk_LangTTOnChange(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_LDOnlyOnChange, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_LDOnlyOnChange, chk);
-		}
-		void Chk_SnippetsMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_Snippets, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_Snippets, chk);
-		}
-		void Chk_BlockHKWithCtrlMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_BlockCtrl, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_BlockCtrl, chk);
-		}
-		void Chk_LangTTDiffLayoutColorsMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_LDDifferentAppearence, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_LDDifferentAppearence, chk);
-		}
-		void ExcludedProgramsMouseHover(object sender, EventArgs e) {
-			var lbl = sender as Label;
-			HelpMeUnderstand.ToolTipTitle = lbl.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_ExcludedPrograms, lbl);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_ExcludedPrograms, lbl);
-		}
-		void Chk_MCDS_supportMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_MCDSSupport, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_MCDSSupport, chk);
-		}
-		void Txt_LangTTTextMouseHover(object sender, EventArgs e) {
-			var lbl = sender as TextBox;
-			HelpMeUnderstand.ToolTipTitle = lbl.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_LDText, lbl);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_LDText, lbl);
-		}
-		void Chk_OneLayoutWholeWordMouseHover(object sender, EventArgs e) {
-			var chk = sender as CheckBox;
-			HelpMeUnderstand.ToolTipTitle = chk.Text;
-			if (Lang == "English")
-				HelpMeUnderstand.Show(Languages.English.TT_OneLayoutWholeWordCS, chk);
-			else if (Lang == "Русский")
-				HelpMeUnderstand.Show(Languages.Russian.TT_OneLayoutWholeWordCS, chk);
-		}
-		#endregion
 		#endregion
 	}
 }

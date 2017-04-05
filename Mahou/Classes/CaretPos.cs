@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Net.Sockets;
 using System.Text;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 namespace Mahou
 {

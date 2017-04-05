@@ -23,6 +23,8 @@ namespace Mahou
 		public static WinAPI.LowLevelProc _proc = KMHook.HookCallback;
 		public static WinAPI.LowLevelProc _mouse_proc = KMHook.MouseHookCallback;
 		public static Locales.Locale[] locales = Locales.AllList();
+		public static string _language = "";
+		public static Dictionary<Languages.Element, string> Lang = Languages.English;
 		public static Configs MyConfs = new Configs();
 		public static MahouUI mahou;
 		public static List<string> lcnmid = new List<string>();
@@ -49,11 +51,12 @@ namespace Mahou
 					if (MyConfs.ReadBool("FirstStart", "First")) {
 						if (System.Globalization.CultureInfo.InstalledUICulture.TwoLetterISOLanguageName == "ru") {
 							MyConfs.Write("Appearence", "Language", "Русский");
-							MyConfs.Write("Layouts", "SpecificLayout1", Languages.Russian.SwitchBetween);
+    						MahouUI.InitLanguage();
+							MyConfs.Write("Layouts", "SpecificLayout1", Lang[Languages.Element.SwitchBetween]);
 							MyConfs.Write("FirstStart", "First", "False");
 						}
-					}
-//					InitLanguage();
+					} else {
+						MahouUI.InitLanguage();}
 					mahou = new MahouUI();
 					//Refreshes icon text language at startup
 //					mahou.icon.RefreshText(MMain.UI[44], MMain.UI[42], MMain.UI[43]);
@@ -63,10 +66,7 @@ namespace Mahou
 					if (args[0] == "_!_updated_!_") {
 						Logging.Log("Mahou updated.");
 						mahou.ToggleVisibility();
-						if (mahou.Lang == "English")
-							MessageBox.Show(Languages.English.UpdateComplete, Languages.English.UpdateComplete, MessageBoxButtons.OK, MessageBoxIcon.Information);
-						if (mahou.Lang == "Русский")
-							MessageBox.Show(Languages.Russian.UpdateComplete, Languages.Russian.UpdateComplete, MessageBoxButtons.OK, MessageBoxIcon.Information);
+						MessageBox.Show(Lang[Languages.Element.UpdateComplete], Lang[Languages.Element.UpdateComplete], MessageBoxButtons.OK, MessageBoxIcon.Information);
 					}
 					StartHook();
 					foreach (Locales.Locale lc in MMain.locales) {	

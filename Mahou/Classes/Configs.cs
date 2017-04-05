@@ -1,8 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Mahou
@@ -52,7 +49,7 @@ namespace Mahou
 			CheckInt("Layouts", "SpecificKey2", "0");
 			CheckInt("Layouts", "SpecificKey3", "0");
 			CheckInt("Layouts", "SpecificKey4", "0");
-			CheckString("Layouts", "SpecificLayout1", Languages.English.SwitchBetween);
+			CheckString("Layouts", "SpecificLayout1", Languages.English[Languages.Element.SwitchBetween]);
 			CheckString("Layouts", "SpecificLayout2", "");
 			CheckString("Layouts", "SpecificLayout3", "");
 			CheckString("Layouts", "SpecificLayout4", "");
